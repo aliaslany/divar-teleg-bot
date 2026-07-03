@@ -22,8 +22,10 @@ jobs:
 
       - name: Run bot
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SEARCH_CONDITIONS: ${{ secrets.SEARCH_CONDITIONS }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_CHATID: ${{ secrets.BOT_CHATID }}
+          SLEEP_SEC: ${{ secrets.SLEEP_SEC }}
         run: python main.py
 
       - name: Commit updated state file
