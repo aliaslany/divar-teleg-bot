@@ -19,6 +19,8 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Debug env
+        run: echo "SEARCH_CONDITIONS is set:" && [ -n "$SEARCH_CONDITIONS" ] && echo "yes" || echo "NO - EMPTY"
 
       - name: Run bot
         env:
