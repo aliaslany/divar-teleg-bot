@@ -9,10 +9,27 @@ from pydantic import BaseModel
 import asyncio
 
 
-URL = "https://api.divar.ir/v8/web-search/{SEARCH_CONDITIONS}".format(**os.environ)
+URL = "https://api.divar.ir/v8/postlist/w/search"
+
 BOT_TOKEN = "{BOT_TOKEN}".format(**os.environ)
 BOT_CHATID = "{BOT_CHATID}".format(**os.environ)
 SLEEP_SEC = "{SLEEP_SEC}".format(**os.environ)
+
+# New search parameters (replace the old SEARCH_CONDITIONS URL-path string)
+SEARCH_CITY_ID = os.environ.get("SEARCH_CITY_ID", "897")  # e.g. "897" for Golestan province
+SEARCH_CATEGORY = os.environ.get("SEARCH_CATEGORY", "real-estate")
+
+REQUEST_HEADERS = {
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "referrer": "https://divar.ir/",
+    "x-render-type": "CSR",
+    "x-standard-divar-error": "true",
+}
 
 proxy_url = None
 if os.environ.get("PROXY_URL", ""):
@@ -34,17 +51,48 @@ class AD(BaseModel):
     token: str
 
 
-def get_data(page=None):
-    api_url = URL
-    if page:
-        api_url += f"&page={page}"
-    response = requests.get(api_url)
-    print("{} - Got response: {}".format(datetime.datetime.now(), response.status_code))
+def build_search_body():
+    """Builds the JSON body for Divar's new postlist search API (first page only)."""
+    return {
+        "city_ids": [SEARCH_CITY_ID],
+        "search_data": {
+            "form_data": {
+                "data": {
+                    "category": {
+                        "str": {"value": SEARCH_CATEGORY}
+                    }
+                }
+            },
+            "server_payload": {
+                "@type": "type.googleapis.com/widgets.SearchData.ServerPayload",
+                "additional_form_data": {
+                    "data": {
+                        "sort": {"str": {"value": "sort_date"}}
+                    }
+                },
+            },
+        },
+        "disable_recommendation": False,
+        "map_state": {"camera_info": {"bbox": {}}},
+        "current_tab_slug": "default",
+    }
+
+
+def get_data():
+    body = build_search_body()
+    response = requests.post(URL, headers=REQUEST_HEADERS, json=body)
+    print(
+        "{} - Got response: {}".format(
+            datetime.datetime.now(), response.status_code
+        )
+    )
+    response.raise_for_status()
     return response.json()
 
 
 def get_ads_list(data):
-    return data["web_widgets"]["post_list"]
+    # New API returns posts directly under "widget_list"
+    return data.get("widget_list", [])
 
 
 def fetch_ad_data(token: str) -> AD:
@@ -52,8 +100,11 @@ def fetch_ad_data(token: str) -> AD:
     data = requests.get(f"https://api.divar.ir/v8/posts-v2/web/{token}").json()
     images = []
     # check post exists
-    if not "sections" in data:
+    if "sections" not in data:
         return None
+
+    title = ""
+    description = ""
 
     # get data
     for section in data["sections"]:
@@ -119,10 +170,14 @@ def load_tokens():
     token_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), "tokens.json"
     )
-    with open(token_path, "r") as content:
-        if content == "":
-            return []
-        return json.load(content)
+    try:
+        with open(token_path, "r") as content:
+            data = content.read()
+            if not data:
+                return []
+            return json.loads(data)
+    except FileNotFoundError:
+        return []
 
 
 def save_tokns(tokens):
@@ -133,12 +188,12 @@ def save_tokns(tokens):
         json.dump(tokens, outfile)
 
 
-def get_tokens_page(page=None):
-    data = get_data(page)
+def get_tokens_page():
+    data = get_data()
     data = get_ads_list(data)
     data = data[::-1]
-    # get tokens
-    data = filter(lambda x: x["widget_type"] == "POST_ROW", data)
+    # get tokens - only real post rows (skip banners, blocking views, etc.)
+    data = filter(lambda x: x.get("widget_type") == "POST_ROW", data)
     tokens = list(map(lambda x: x["data"]["token"], data))
     return tokens
 
@@ -160,15 +215,14 @@ if __name__ == "__main__":
     print("Started at {}.".format(datetime.datetime.now()))
     tokens = load_tokens()
     print("Tokens length: {}".format(len(tokens)))
-    pages = [""]
-    while True:
-        for page in pages:
-            # get new tokens list
-            tokens_list = get_tokens_page(page)
-            # remove repeated tokens
-            tokens_list = list(filter(lambda t: not t in tokens, tokens_list))
-            tokens = list(set(tokens_list + tokens))
-            asyncio.run(process_data(tokens_list))
-        # save new tokens
-        save_tokns(tokens)
-        time.sleep(int(SLEEP_SEC))
+
+    # get new tokens list (single page - newest ads sorted by date)
+    tokens_list = get_tokens_page()
+    # remove repeated tokens
+    tokens_list = list(filter(lambda t: t not in tokens, tokens_list))
+    tokens = list(set(tokens_list + tokens))
+    asyncio.run(process_data(tokens_list))
+
+    # save new tokens
+    save_tokns(tokens)
+    print("Finished at {}.".format(datetime.datetime.now()))
