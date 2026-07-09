@@ -28,6 +28,8 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHATID: ${{ secrets.BOT_CHATID }}
           SLEEP_SEC: ${{ secrets.SLEEP_SEC }}
+          SEARCH_CITY_ID: ${{ secrets.SEARCH_CITY_ID }}
+          SEARCH_CATEGORY: ${{ secrets.SEARCH_CATEGORY }}
         run: python main.py
 
       - name: Commit updated state file
