@@ -87,16 +87,12 @@ def get_data():
         )
     )
     response.raise_for_status()
-    result = response.json()
-    print("Response top-level keys: {}".format(list(result.keys())))
-    print("Search body sent: {}".format(json.dumps(body)))
-    print("Raw response (first 800 chars): {}".format(json.dumps(result)[:800]))
-    return result
+    return response.json()
 
 
 def get_ads_list(data):
-    # New API returns posts directly under "widget_list"
-    return data.get("widget_list", [])
+    # New API returns posts under "list_widgets" (not "widget_list")
+    return data.get("list_widgets", [])
 
 
 def fetch_ad_data(token: str) -> AD:
@@ -210,12 +206,7 @@ def save_tokns(tokens):
 def get_tokens_page():
     data = get_data()
     data = get_ads_list(data)
-    print(
-        "Raw widget_list length: {}. Widget types seen: {}".format(
-            len(data),
-            list(set(w.get("widget_type") for w in data)),
-        )
-    )
+    print("Raw list_widgets length: {}".format(len(data)))
     data = data[::-1]
     # get tokens - only real post rows (skip banners, blocking views, etc.)
     data = filter(lambda x: x.get("widget_type") == "POST_ROW", data)
