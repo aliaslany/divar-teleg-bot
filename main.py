@@ -97,10 +97,18 @@ def get_ads_list(data):
 
 def fetch_ad_data(token: str) -> AD:
     # send request
-    data = requests.get(f"https://api.divar.ir/v8/posts-v2/web/{token}").json()
+    response = requests.get(
+        f"https://api.divar.ir/v8/posts-v2/web/{token}", headers=REQUEST_HEADERS
+    )
+    data = response.json()
     images = []
     # check post exists
     if "sections" not in data:
+        print(
+            "Warning: unexpected response for token {} (status {}): {}".format(
+                token, response.status_code, str(data)[:300]
+            )
+        )
         return None
 
     title = ""
@@ -175,8 +183,15 @@ def load_tokens():
             data = content.read()
             if not data:
                 return []
-            return json.loads(data)
-    except FileNotFoundError:
+            parsed = json.loads(data)
+            if not isinstance(parsed, list):
+                print(
+                    "Warning: tokens.json did not contain a list "
+                    "(got {}), resetting to empty list.".format(type(parsed))
+                )
+                return []
+            return parsed
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 
@@ -218,8 +233,10 @@ if __name__ == "__main__":
 
     # get new tokens list (single page - newest ads sorted by date)
     tokens_list = get_tokens_page()
+    print("Fetched {} ads from Divar this run.".format(len(tokens_list)))
     # remove repeated tokens
     tokens_list = list(filter(lambda t: t not in tokens, tokens_list))
+    print("{} of them are new (not seen before).".format(len(tokens_list)))
     tokens = list(set(tokens_list + tokens))
     asyncio.run(process_data(tokens_list))
 
