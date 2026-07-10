@@ -87,7 +87,11 @@ def get_data():
         )
     )
     response.raise_for_status()
-    return response.json()
+    result = response.json()
+    print("Response top-level keys: {}".format(list(result.keys())))
+    print("Search body sent: {}".format(json.dumps(body)))
+    print("Raw response (first 800 chars): {}".format(json.dumps(result)[:800]))
+    return result
 
 
 def get_ads_list(data):
