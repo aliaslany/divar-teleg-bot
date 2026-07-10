@@ -114,34 +114,40 @@ def fetch_ad_data(token: str) -> AD:
     title = ""
     description = ""
 
-    # get data
-    for section in data["sections"]:
-        # find title section
-        if section["section_name"] == "TITLE":
-            title = section["widgets"][0]["data"]["title"]
+    try:
+        # get data
+        for section in data["sections"]:
+            # find title section
+            if section["section_name"] == "TITLE":
+                title = section["widgets"][0]["data"]["title"]
 
-        # find images section
-        if section["section_name"] == "IMAGE":
-            images = section["widgets"][0]["data"]["items"]
-            images = [img["image"]["url"] for img in images]
+            # find images section
+            if section["section_name"] == "IMAGE":
+                images = section["widgets"][0]["data"]["items"]
+                images = [img["image"]["url"] for img in images]
 
-        # find description section
-        if section["section_name"] == "DESCRIPTION":
-            description = section["widgets"][1]["data"]["text"]
+            # find description section
+            if section["section_name"] == "DESCRIPTION":
+                description = section["widgets"][1]["data"]["text"]
 
-    # get district
-    district = data["seo"]["web_info"]["district_persian"]
-    price = data["webengage"]["price"]
+        # get district (fall back gracefully if missing)
+        district = (
+            data.get("seo", {}).get("web_info", {}).get("district_persian", "")
+        )
+        price = data.get("webengage", {}).get("price", 0) or 0
 
-    # create ad object
-    ad = AD(
-        token=token,
-        title=title,
-        district=district,
-        description=description,
-        images=images,
-        price=price,
-    )
+        # create ad object
+        ad = AD(
+            token=token,
+            title=title,
+            district=district,
+            description=description,
+            images=images,
+            price=price,
+        )
+    except (KeyError, IndexError, TypeError) as e:
+        print("Warning: failed to parse ad {} ({}), skipping.".format(token, e))
+        return None
 
     return ad
 
