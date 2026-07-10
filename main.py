@@ -37,7 +37,13 @@ if os.environ.get("PROXY_URL", ""):
 
 TOKENS = list()
 # setup telegram bot client
-req_proxy = telegram.request.HTTPXRequest(proxy_url=proxy_url)
+req_proxy = telegram.request.HTTPXRequest(
+    proxy_url=proxy_url,
+    connect_timeout=30,
+    read_timeout=30,
+    write_timeout=30,
+    pool_timeout=30,
+)
 bot = telegram.Bot(token=BOT_TOKEN, request=req_proxy)
 
 
@@ -227,9 +233,24 @@ async def process_data(tokens):
         if not ad:
             continue
         print("AD - {} - {}".format(token, vars(ad)))
-        # send message to telegram
+        # send message to telegram (retry once on transient timeout)
         print("sending to telegram token: {}".format(ad.token))
-        await send_telegram_message(ad)
+        for attempt in range(2):
+            try:
+                await send_telegram_message(ad)
+                break
+            except telegram.error.TimedOut:
+                if attempt == 0:
+                    print(
+                        "Timed out sending {}, retrying once...".format(ad.token)
+                    )
+                    time.sleep(3)
+                else:
+                    print(
+                        "Timed out again sending {}, skipping this ad.".format(
+                            ad.token
+                        )
+                    )
         time.sleep(1)
 
 
