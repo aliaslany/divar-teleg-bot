@@ -206,6 +206,12 @@ def save_tokns(tokens):
 def get_tokens_page():
     data = get_data()
     data = get_ads_list(data)
+    print(
+        "Raw widget_list length: {}. Widget types seen: {}".format(
+            len(data),
+            list(set(w.get("widget_type") for w in data)),
+        )
+    )
     data = data[::-1]
     # get tokens - only real post rows (skip banners, blocking views, etc.)
     data = filter(lambda x: x.get("widget_type") == "POST_ROW", data)
