@@ -16,7 +16,12 @@ BOT_CHATID = "{BOT_CHATID}".format(**os.environ)
 SLEEP_SEC = "{SLEEP_SEC}".format(**os.environ)
 
 # New search parameters (replace the old SEARCH_CONDITIONS URL-path string)
-SEARCH_CITY_ID = os.environ.get("SEARCH_CITY_ID", "897")  # e.g. "897" for Golestan province
+# Comma-separated list of city IDs, e.g. "823,1996,1999"
+SEARCH_CITY_IDS = [
+    c.strip()
+    for c in os.environ.get("SEARCH_CITY_IDS", "897").split(",")
+    if c.strip()
+]
 SEARCH_CATEGORY = os.environ.get("SEARCH_CATEGORY", "real-estate")
 
 REQUEST_HEADERS = {
@@ -60,7 +65,7 @@ class AD(BaseModel):
 def build_search_body():
     """Builds the JSON body for Divar's new postlist search API (first page only)."""
     return {
-        "city_ids": [SEARCH_CITY_ID],
+        "city_ids": SEARCH_CITY_IDS,
         "search_data": {
             "form_data": {
                 "data": {
