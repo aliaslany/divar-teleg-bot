@@ -28,16 +28,16 @@ jobs:
         run: pip install -r requirements.txt
       - name: Debug env
         run: echo "SEARCH_CONDITIONS is set:" && [ -n "$SEARCH_CONDITIONS" ] && echo "yes" || echo "NO - EMPTY"
-
       - name: Run bot
         env:
-          SEARCH_CONDITIONS: ${{ secrets.SEARCH_CONDITIONS }}
+          SEARCH_CITY_IDS: ${{ secrets.SEARCH_CITY_IDS }}   # <-- تغییر از SEARCH_CITY_ID
+          SEARCH_CATEGORY: ${{ secrets.SEARCH_CATEGORY }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHATID: ${{ secrets.BOT_CHATID }}
+          PROXY_URL: ${{ secrets.PROXY_URL }}
           SLEEP_SEC: ${{ secrets.SLEEP_SEC }}
-          SEARCH_CITY_ID: ${{ secrets.SEARCH_CITY_ID }}
-          SEARCH_CATEGORY: ${{ secrets.SEARCH_CATEGORY }}
         run: python main.py
+
 
       - name: Commit updated state file
         run: |
