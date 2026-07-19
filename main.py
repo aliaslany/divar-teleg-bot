@@ -106,6 +106,10 @@ def get_ads_list(data):
     return data.get("list_widgets", [])
 
 
+DEBUG_DUMP_SECTIONS = os.environ.get("DEBUG_DUMP_SECTIONS", "") == "1"
+_debug_dumped_once = False
+
+
 def fetch_ad_data(token: str) -> AD:
     # send request
     response = requests.get(
@@ -121,6 +125,14 @@ def fetch_ad_data(token: str) -> AD:
             )
         )
         return None
+
+    if DEBUG_DUMP_SECTIONS:
+        global _debug_dumped_once
+        if not _debug_dumped_once:
+            _debug_dumped_once = True
+            print("===== FULL SECTIONS DUMP for token {} =====".format(token))
+            print(json.dumps(data["sections"], ensure_ascii=False))
+            print("===== END DUMP =====")
 
     title = ""
     description = ""
@@ -163,6 +175,49 @@ def fetch_ad_data(token: str) -> AD:
     return ad
 
 
+# --- Hashtag keyword mapping -------------------------------------------
+# Each hashtag maps to a list of keywords/variants to search for in the
+# ad's title, description, and district (any match triggers the tag).
+CATEGORY_HASHTAGS = {
+    "مسکونی": ["مسکونی"],
+    "آپارتمان": ["آپارتمان", "اپارتمان"],
+    "ویلایی": ["ویلایی", "ویلا"],
+    "باغ": ["باغ"],
+    "زمین": ["زمین"],
+    "کشاورزی": ["کشاورزی"],
+    "تجاری": ["تجاری"],
+    "مغازه": ["مغازه"],
+    "اداری": ["اداری"],
+}
+
+LOCATION_HASHTAGS = {
+    "فاضل_آباد": ["فاضل آباد", "فاضل‌آباد", "فاضلاباد"],
+    "علی_آباد_کتول": ["علی آباد کتول", "علی‌آباد کتول", "علی اباد کتول", "علی آباد"],
+    "مزرعه": ["مزرعه"],
+}
+
+DEAL_TYPE_HASHTAGS = {
+    "اجاره": ["اجاره"],
+    "رهن": ["رهن"],
+    "فروش": ["فروش"],
+}
+
+ALL_HASHTAG_GROUPS = [CATEGORY_HASHTAGS, LOCATION_HASHTAGS, DEAL_TYPE_HASHTAGS]
+
+
+def generate_hashtags(ad: "AD") -> list[str]:
+    """Scans the ad's title/description/district for known keywords and
+    returns a list of matching hashtags (without the leading #)."""
+    haystack = " ".join([ad.title or "", ad.description or "", ad.district or ""])
+
+    tags = []
+    for group in ALL_HASHTAG_GROUPS:
+        for tag, keywords in group.items():
+            if any(keyword in haystack for keyword in keywords):
+                tags.append(tag)
+    return tags
+
+
 async def send_telegram_message(ad: AD):
     text = f"🗄 <b>{ad.title}</b>" + "\n"
     text += f"📌 محل آگهی : <i>{ad.district}</i>" + "\n"
@@ -170,6 +225,10 @@ async def send_telegram_message(ad: AD):
     text += f"💰 قیمت : {_price}" + "\n\n"
     text += f"📄 توضیحات :\n{ad.description}" + "\n"
     text += f"https://divar.ir/v/a/{ad.token}"
+
+    hashtags = generate_hashtags(ad)
+    if hashtags:
+        text += "\n\n" + " ".join(f"#{tag}" for tag in hashtags)
 
     # send single photo
     if len(ad.images) == 1:
