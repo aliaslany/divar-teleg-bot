@@ -1,0 +1,42 @@
+"""Central place for environment-driven configuration and constants."""
+import os
+
+DIVAR_SEARCH_URL = "https://api.divar.ir/v8/postlist/w/search"
+DIVAR_POST_DETAIL_URL = "https://api.divar.ir/v8/posts-v2/web/{token}"
+
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+BOT_CHATID = os.environ["BOT_CHATID"]
+SLEEP_SEC = os.environ.get("SLEEP_SEC", "")
+
+# Comma-separated list of city IDs, e.g. "823,1996,1999"
+SEARCH_CITY_IDS = [
+    c.strip()
+    for c in os.environ.get("SEARCH_CITY_IDS", "897").split(",")
+    if c.strip()
+]
+SEARCH_CATEGORY = os.environ.get("SEARCH_CATEGORY", "real-estate")
+
+PROXY_URL = os.environ.get("PROXY_URL") or None
+
+DEBUG_DUMP_SECTIONS = os.environ.get("DEBUG_DUMP_SECTIONS", "") == "1"
+
+REQUEST_HEADERS = {
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "referrer": "https://divar.ir/",
+    "x-render-type": "CSR",
+    "x-standard-divar-error": "true",
+}
+
+# Fixed footer appended to every outgoing Telegram message.
+FOOTER_TEXT = (
+    "\n\n📞 شماره تماس جهت هماهنگی:\n"
+    "09922434338\n"
+    "\u200c\n"
+    "📢 [علی‌آباد مِلک | اولین مرجع املاک علی‌آباد کتول]\n"
+    "🆔 @aliabadmelk"
+)
