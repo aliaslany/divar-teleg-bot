@@ -35,6 +35,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHATID: ${{ secrets.BOT_CHATID }}
           PROXY_URL: ${{ secrets.PROXY_URL }}
+          DEBUG_DUMP_SECTIONS : ${{ 1 }}
           SLEEP_SEC: ${{ secrets.SLEEP_SEC }}
         run: python main.py
 
