@@ -1,4 +1,5 @@
 import datetime
+import html
 import json
 import os
 import time
@@ -60,6 +61,8 @@ class AD(BaseModel):
     district: str
     images: list[str] = []
     token: str
+    features: list[tuple[str, str]] = []  # e.g. [("متراژ ویلا", "۱۰۰"), ...]
+    posted_in: str = ""  # e.g. "علی‌آباد کتول، خ ابر-شیرین آباد-علی آباد"
 
 
 def build_search_body():
@@ -108,6 +111,71 @@ def get_ads_list(data):
 
 DEBUG_DUMP_SECTIONS = os.environ.get("DEBUG_DUMP_SECTIONS", "") == "1"
 _debug_dumped_once = False
+
+
+def extract_features(sections):
+    """Walks the LIST_DATA section (and any nested amenities modal inside it)
+    and returns a list of (label, value) pairs for every structured field
+    Divar shows on the ad page (metrage, capacity, rent prices, amenities...).
+    """
+    features = []
+
+    def process_widgets(widgets):
+        pending_label = None
+        for w in widgets:
+            wtype = w.get("widget_type")
+            data = w.get("data", {})
+
+            if wtype == "GROUP_INFO_ROW":
+                for item in data.get("items", []):
+                    t, v = item.get("title", ""), item.get("value", "")
+                    if t and v:
+                        features.append((t, v))
+
+            elif wtype == "UNEXPANDABLE_ROW":
+                t, v = data.get("title", ""), data.get("value", "")
+                if t and v:
+                    features.append((t, v))
+
+            elif wtype == "DESCRIPTION_ROW":
+                # usually a label for a following chip list (e.g. "چشم‌انداز")
+                pending_label = data.get("text", "")
+
+            elif wtype == "WRAPPER_ROW":
+                chips = data.get("chip_list", {}).get("chips", [])
+                chip_texts = [c.get("text", "") for c in chips if c.get("text")]
+                if chip_texts:
+                    features.append((pending_label or "ویژگی", "، ".join(chip_texts)))
+                pending_label = None
+
+            elif wtype == "SELECTOR_ROW":
+                # amenities are often tucked inside a modal opened by this row
+                modal = (
+                    data.get("action", {})
+                    .get("payload", {})
+                    .get("modal_page", {})
+                )
+                nested = modal.get("widget_list")
+                if nested:
+                    process_widgets(nested)
+
+            # SECTION_TITLE_ROW and others are just headers/dividers -> skip
+
+    for section in sections:
+        if section.get("section_name") == "LIST_DATA":
+            process_widgets(section.get("widgets", []))
+
+    return features
+
+
+def extract_posted_in(sections):
+    """Pulls the '<n> هفته پیش در <location>' line shown under the title."""
+    for section in sections:
+        if section.get("section_name") == "TITLE":
+            for w in section.get("widgets", []):
+                if w.get("widget_type") == "EXPANDABLE_SECTION":
+                    return w.get("data", {}).get("title", "")
+    return ""
 
 
 def fetch_ad_data(token: str) -> AD:
@@ -159,6 +227,9 @@ def fetch_ad_data(token: str) -> AD:
         )
         price = data.get("webengage", {}).get("price", 0) or 0
 
+        features = extract_features(data["sections"])
+        posted_in = extract_posted_in(data["sections"])
+
         # create ad object
         ad = AD(
             token=token,
@@ -167,6 +238,8 @@ def fetch_ad_data(token: str) -> AD:
             description=description,
             images=images,
             price=price,
+            features=features,
+            posted_in=posted_in,
         )
     except (KeyError, IndexError, TypeError) as e:
         print("Warning: failed to parse ad {} ({}), skipping.".format(token, e))
@@ -206,9 +279,11 @@ ALL_HASHTAG_GROUPS = [CATEGORY_HASHTAGS, LOCATION_HASHTAGS, DEAL_TYPE_HASHTAGS]
 
 
 def generate_hashtags(ad: "AD") -> list[str]:
-    """Scans the ad's title/description/district for known keywords and
-    returns a list of matching hashtags (without the leading #)."""
-    haystack = " ".join([ad.title or "", ad.description or "", ad.district or ""])
+    """Scans the ad's title/description/district/posted_in for known
+    keywords and returns a list of matching hashtags (without the #)."""
+    haystack = " ".join(
+        [ad.title or "", ad.description or "", ad.district or "", ad.posted_in or ""]
+    )
 
     tags = []
     for group in ALL_HASHTAG_GROUPS:
@@ -219,11 +294,19 @@ def generate_hashtags(ad: "AD") -> list[str]:
 
 
 async def send_telegram_message(ad: AD):
-    text = f"🗄 <b>{ad.title}</b>" + "\n"
-    text += f"📌 محل آگهی : <i>{ad.district}</i>" + "\n"
+    text = f"🗄 <b>{html.escape(ad.title)}</b>" + "\n"
+    location_line = ad.posted_in or ad.district
+    if location_line:
+        text += f"📌 محل آگهی : <i>{html.escape(location_line)}</i>" + "\n"
     _price = f"{ad.price:,} تومان" if ad.price else "توافقی"
-    text += f"💰 قیمت : {_price}" + "\n\n"
-    text += f"📄 توضیحات :\n{ad.description}" + "\n"
+    text += f"💰 قیمت : {_price}" + "\n"
+
+    if ad.features:
+        text += "\n📋 <b>مشخصات</b> :\n"
+        for label, value in ad.features:
+            text += f"🔸 {html.escape(label)}: {html.escape(value)}\n"
+
+    text += f"\n📄 توضیحات :\n{html.escape(ad.description)}" + "\n"
     text += f"https://divar.ir/v/a/{ad.token}"
 
     hashtags = generate_hashtags(ad)
