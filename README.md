@@ -23,8 +23,9 @@ main.py             # entry point / orchestration
 config.py           # env vars and constants (search filters, footer text, etc.)
 divar_client.py      # talks to Divar's API, extracts ad fields
 hashtags.py          # keyword + breadcrumb hashtag generation
-telegram_client.py   # message formatting and sending
-storage.py            # tokens.json state (seen ads, status)
+telegram_client.py   # Telegram formatting and rich-media delivery
+messenger_client.py  # Bale, Rubika, and Eitaa text delivery
+storage.py            # tokens.json state (per-messenger delivery tracking)
 admin_commands.py    # optional: admin DM commands for changing filters
 status_checker.py    # optional: re-checks old ads for removal
 requirements.txt
@@ -37,7 +38,7 @@ Because free hosting doesn't give you a place to run a long-lived process, the b
 
 1. Polls for any pending admin DM commands (if `ADMIN_USER_IDS` is set) and updates search filters accordingly.
 2. Searches Divar for the configured cities/category, sorted by newest.
-3. Sends a Telegram message for every ad not seen in a previous run.
+3. Sends every new ad to each configured messenger.
 4. Optionally rechecks a batch of older ads to see if they look removed, and announces those.
 5. Commits the updated state (`tokens.json`, and `filters.json`/`admin_state.json` if used) back to the repo, so the next run picks up where this one left off.
 
@@ -63,13 +64,28 @@ Go to **Settings → Secrets and variables → Actions** in your fork and add:
 
 | Secret | Required | Example | Notes |
 |---|---|---|---|
-| `BOT_TOKEN` | ✅ | `123456:ABC-DEF...` | From BotFather |
-| `BOT_CHATID` | ✅ | `-1001234567890` or `@mychannel` | Destination chat/channel |
+| `BOT_TOKEN` | optional | `123456:ABC-DEF...` | Telegram bot token from BotFather |
+| `BOT_CHATID` | optional | `-1001234567890` or `@mychannel` | Telegram destination chat/channel |
+| `BALE_BOT_TOKEN` | optional | | Bale bot token |
+| `BALE_CHATID` | optional | | Bale destination chat/channel |
+| `RUBIKA_BOT_TOKEN` | optional | | Rubika bot token |
+| `RUBIKA_CHATID` | optional | | Rubika destination chat/channel |
+| `EITAA_TOKEN` | optional | | EitaaYar API token |
+| `EITAA_CHATID` | optional | | Eitaa destination chat/channel |
 | `SEARCH_CITY_IDS` | ✅ | `823,1996,1999` | Comma-separated numeric city IDs |
 | `SEARCH_CATEGORY` | ✅ | `real-estate` | Divar category slug |
 | `PROXY_URL` | optional | | Only needed if your runner can't reach Divar/Telegram directly |
 | `ADMIN_USER_IDS` | optional | `111111,222222` | Telegram numeric user IDs allowed to change filters via DM (see below) |
 | `STATUS_CHECK_LIMIT` | optional | `20` | Max old ads rechecked per run for the "likely removed" feature |
+
+Configure at least one token/chat-ID pair. Telegram keeps its rich photo or album
+delivery; Bale, Rubika, and Eitaa receive the formatted ad as text. The non-Telegram
+clients use `sendMessage` endpoints and can be pointed at compatible API gateways with
+the optional `BALE_API_BASE_URL`, `RUBIKA_API_BASE_URL`, or `EITAA_API_BASE_URL`
+environment variables.
+
+`tokens.json` now records delivery per platform. If one platform fails, the next run
+retries only that platform, avoiding duplicate posts on the platforms that succeeded.
 
 ### 5. Enable Actions write permissions
 

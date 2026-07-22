@@ -4,8 +4,21 @@ import os
 DIVAR_SEARCH_URL = "https://api.divar.ir/v8/postlist/w/search"
 DIVAR_POST_DETAIL_URL = "https://api.divar.ir/v8/posts-v2/web/{token}"
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-BOT_CHATID = os.environ["BOT_CHATID"]
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+BOT_CHATID = os.environ.get("BOT_CHATID")
+BALE_BOT_TOKEN = os.environ.get("BALE_BOT_TOKEN")
+BALE_CHATID = os.environ.get("BALE_CHATID")
+RUBIKA_BOT_TOKEN = os.environ.get("RUBIKA_BOT_TOKEN")
+RUBIKA_CHATID = os.environ.get("RUBIKA_CHATID")
+EITAA_TOKEN = os.environ.get("EITAA_TOKEN")
+EITAA_CHATID = os.environ.get("EITAA_CHATID")
+
+BALE_API_BASE_URL = os.environ.get("BALE_API_BASE_URL", "https://tapi.bale.ai")
+RUBIKA_API_BASE_URL = os.environ.get(
+    "RUBIKA_API_BASE_URL", "https://botapi.rubika.ir/v3"
+)
+EITAA_API_BASE_URL = os.environ.get("EITAA_API_BASE_URL", "https://eitaayar.ir/api")
+MESSENGER_REQUEST_TIMEOUT = int(os.environ.get("MESSENGER_REQUEST_TIMEOUT", "30"))
 SLEEP_SEC = os.environ.get("SLEEP_SEC", "")
 
 # Comma-separated list of city IDs, e.g. "823,1996,1999"

@@ -6,14 +6,16 @@ import telegram
 import config
 from hashtags import generate_hashtags
 
-req_proxy = telegram.request.HTTPXRequest(
-    proxy_url=config.PROXY_URL,
-    connect_timeout=30,
-    read_timeout=30,
-    write_timeout=30,
-    pool_timeout=30,
-)
-bot = telegram.Bot(token=config.BOT_TOKEN, request=req_proxy)
+bot = None
+if config.BOT_TOKEN:
+    req_proxy = telegram.request.HTTPXRequest(
+        proxy_url=config.PROXY_URL,
+        connect_timeout=30,
+        read_timeout=30,
+        write_timeout=30,
+        pool_timeout=30,
+    )
+    bot = telegram.Bot(token=config.BOT_TOKEN, request=req_proxy)
 
 
 def build_message_text(ad) -> str:
@@ -41,7 +43,35 @@ def build_message_text(ad) -> str:
     return text
 
 
+def build_plain_message_text(ad) -> str:
+    """Build a portable text-only version for non-Telegram APIs."""
+    text = "🗄 {}\n".format(ad.title)
+
+    location_line = ad.posted_in or ad.district
+    if location_line:
+        text += "📌 محل آگهی : {}\n".format(location_line)
+
+    price = "{:,} تومان".format(ad.price) if ad.price else "توافقی"
+    text += "💰 قیمت : {}\n".format(price)
+
+    if ad.features:
+        text += "\n📋 مشخصات :\n"
+        for label, value in ad.features:
+            text += "🔸 {}: {}\n".format(label, value)
+
+    text += "\n📄 توضیحات :\n{}".format(ad.description)
+
+    hashtags = generate_hashtags(ad)
+    if hashtags:
+        text += "\n\n" + " ".join("#{}".format(tag) for tag in hashtags)
+
+    return text + config.FOOTER_TEXT
+
+
 async def send_telegram_message(ad):
+    if bot is None or not config.BOT_CHATID:
+        raise RuntimeError("Telegram is not configured.")
+
     text = build_message_text(ad)
 
     if len(ad.images) == 1:
