@@ -1,117 +1,58 @@
-# Divar Telegram Bot
+# ربات ارسال آگهی دیوار به تلگرام
 
-A scheduled crawler and notifier for [Divar](https://divar.ir) (Iran's largest classifieds app) that watches one or more cities/categories for new listings and posts them — with rich details, auto-generated hashtags, and optional "likely sold/rented" alerts — to a Telegram chat or channel.
+رباتی برای جست‌وجوی خودکار آگهی‌های جدید دیوار و ارسال آن‌ها به کانال یا گروه تلگرام.
 
-> This is a heavily modified fork of [debMan/divar-telegram-bot](https://github.com/debMan/divar-telegram-bot) (originally [ehcaning/divar-telegram-bot](https://github.com/ehcaning/divar-telegram-bot)). Divar changed its unofficial API since the original project was written, so the crawling logic, project structure, and feature set here are substantially different.
+## امکانات
 
-## Features
+- جست‌وجوی آگهی‌های جدید در یک یا چند شهر
+- فیلتر بر اساس دسته‌بندی دیوار
+- ارسال خودکار جزئیات و تصاویر آگهی به تلگرام
+- تولید خودکار هشتگ‌های مرتبط
+- بررسی اختیاری آگهی‌های حذف‌شده یا اجاره/فروش‌رفته
+- امکان تغییر فیلترها از طریق دستورات ادمین
+- اجرا با GitHub Actions بدون نیاز به سرور یا VPS
+- ذخیره وضعیت آگهی‌های ارسال‌شده برای جلوگیری از ارسال تکراری
 
-- **Runs on GitHub Actions** — no server to host or pay for. A scheduled workflow runs the bot every few minutes.
-- **Multi-city search** — search across several cities at once (`SEARCH_CITY_IDS`).
-- **Rich ad details** — pulls structured fields Divar shows on the ad page (area, room count, capacity, nightly rates, amenities, etc.), not just title/price/description.
-- **Auto-generated hashtags** — combines:
-  - keyword-based tags detected in the ad text (property type, known local areas, deal type)
-  - Divar's own breadcrumb category chain (e.g. `#اجارهٔ_کوتاه_مدت_ویلا_و_باغ`)
-- **Channel-ready formatting** — sends photos/albums with an HTML-formatted caption and a fixed contact/footer block, no direct outbound link.
-- **"Likely sold/rented" alerts** *(optional, heuristic)* — periodically rechecks previously-posted ads and notifies the channel if one seems to have disappeared from Divar.
-- **Admin-controlled filters** *(optional)* — authorized admins can DM the bot commands to change which cities/category it searches, without touching the repo.
+## نحوه عملکرد
 
-## Project structure
+ربات به‌صورت زمان‌بندی‌شده توسط GitHub Actions اجرا می‌شود:
 
-```
-main.py             # entry point / orchestration
-config.py           # env vars and constants (search filters, footer text, etc.)
-divar_client.py      # talks to Divar's API, extracts ad fields
-hashtags.py          # keyword + breadcrumb hashtag generation
-telegram_client.py   # message formatting and sending
-storage.py            # tokens.json state (seen ads, status)
-admin_commands.py    # optional: admin DM commands for changing filters
-status_checker.py    # optional: re-checks old ads for removal
-requirements.txt
-.github/workflows/run-bot.yml
-```
+1. آگهی‌های جدید دیوار را بررسی می‌کند.
+2. آگهی‌های قبلاً ارسال‌شده را شناسایی می‌کند.
+3. آگهی‌های جدید را همراه با جزئیات، تصویر و هشتگ به تلگرام می‌فرستد.
+4. وضعیت را ذخیره می‌کند تا در اجرای بعدی آگهی تکراری ارسال نشود.
 
-## How it works
+## راه‌اندازی سریع
 
-Because free hosting doesn't give you a place to run a long-lived process, the bot doesn't run continuously. Instead, a **GitHub Actions workflow runs it on a schedule** (e.g. every 10 minutes). Each run:
+در بخش **Settings → Secrets and variables → Actions** این مقادیر را تنظیم کنید:
 
-1. Polls for any pending admin DM commands (if `ADMIN_USER_IDS` is set) and updates search filters accordingly.
-2. Searches Divar for the configured cities/category, sorted by newest.
-3. Sends a Telegram message for every ad not seen in a previous run.
-4. Optionally rechecks a batch of older ads to see if they look removed, and announces those.
-5. Commits the updated state (`tokens.json`, and `filters.json`/`admin_state.json` if used) back to the repo, so the next run picks up where this one left off.
+- `BOT_TOKEN` : توکن ربات تلگرام
+- `BOT_CHATID` : شناسه کانال یا گروه مقصد
+- `SEARCH_CITY_IDS` : شناسه شهر یا شهرهای موردنظر
+- `SEARCH_CATEGORY` : دسته‌بندی موردنظر در دیوار
 
-## Setup
+سپس در تنظیمات GitHub Actions، دسترسی **Read and write permissions** را فعال کنید و Workflow را اجرا نمایید.
 
-### 1. Create your bot
+## فناوری‌ها
 
-Open `@BotFather` in Telegram, create a bot, and note its token.
+- Python
+- Telegram Bot API
+- GitHub Actions
+- API غیررسمی دیوار
 
-### 2. Get your chat/channel ID
+## ساختار پروژه
 
-- **Private chat:** message your bot, then visit `https://api.telegram.org/bot<TOKEN>/getUpdates` and read the `chat.id` field.
-- **Public channel:** you can just use its `@username` directly as the chat ID.
-- **Private channel/group:** add the bot as an **admin** with "Post Messages" permission, send a message in it, then check `getUpdates` the same way — the ID will be a large negative number.
+- `main.py` : اجرای اصلی ربات
+- `divar_client.py` : دریافت اطلاعات آگهی‌ها از دیوار
+- `telegram_client.py` : ارسال پیام به تلگرام
+- `hashtags.py` : تولید هشتگ‌های مرتبط
+- `storage.py` : ذخیره وضعیت آگهی‌ها
+- `.github/workflows/run-bot.yml` : اجرای زمان‌بندی‌شده با GitHub Actions
 
-### 3. Find your city ID(s) and category slug
+## نکته
 
-Go to [divar.ir](https://divar.ir), pick your city and category, and open the browser's Network tab (DevTools) while browsing search results. Look for the `city_ids` and `category` values in the request sent to `api.divar.ir/v8/postlist/w/search`. Alternatively, the URL shown when browsing `divar.ir/s/...` often reflects the category slug (e.g. `real-estate`, `villa`, `temporary-rent`).
+این پروژه از API غیررسمی دیوار استفاده می‌کند و در صورت تغییر API یا ساختار وب‌سایت ممکن است نیاز به به‌روزرسانی داشته باشد.
 
-### 4. Fork this repo, then add repository secrets
+## مشارکت
 
-Go to **Settings → Secrets and variables → Actions** in your fork and add:
-
-| Secret | Required | Example | Notes |
-|---|---|---|---|
-| `BOT_TOKEN` | ✅ | `123456:ABC-DEF...` | From BotFather |
-| `BOT_CHATID` | ✅ | `-1001234567890` or `@mychannel` | Destination chat/channel |
-| `SEARCH_CITY_IDS` | ✅ | `823,1996,1999` | Comma-separated numeric city IDs |
-| `SEARCH_CATEGORY` | ✅ | `real-estate` | Divar category slug |
-| `PROXY_URL` | optional | | Only needed if your runner can't reach Divar/Telegram directly |
-| `ADMIN_USER_IDS` | optional | `111111,222222` | Telegram numeric user IDs allowed to change filters via DM (see below) |
-| `STATUS_CHECK_LIMIT` | optional | `20` | Max old ads rechecked per run for the "likely removed" feature |
-
-### 5. Enable Actions write permissions
-
-**Settings → Actions → General → Workflow permissions** → select **"Read and write permissions"** (needed so the workflow can commit `tokens.json` back to the repo).
-
-### 6. Run it
-
-Go to the **Actions** tab → select the workflow → **Run workflow**. On success it'll run automatically on the schedule defined in `.github/workflows/run-bot.yml`.
-
-## Admin filter commands
-
-If `ADMIN_USER_IDS` is set, authorized users can DM the bot (private chat, not the channel):
-
-```
-/set_cities 823,1996,1999
-/set_category real-estate
-/show_filters
-/help
-```
-
-Changes take effect starting the *next* scheduled run and only affect future searches — the bot never edits or deletes messages it already sent.
-
-## Local development
-
-```bash
-git clone https://github.com/<your-username>/divar-teleg-bot.git
-cd divar-teleg-bot
-pip install -r requirements.txt
-export BOT_TOKEN=...
-export BOT_CHATID=...
-export SEARCH_CITY_IDS=823,1996
-export SEARCH_CATEGORY=real-estate
-echo '{}' > tokens.json
-python main.py
-```
-
-## Known limitations
-
-- This uses Divar's **unofficial** web API (the same one divar.ir itself calls), reverse-engineered from browser traffic. It can break again if Divar changes headers, endpoints, or response shapes.
-- The "likely sold/rented" detection is a **heuristic** (an ad becoming unreachable), not an explicit status field from Divar, since none is exposed on this endpoint. It can occasionally misfire; see `status_checker.py` for details and a debug flag to help refine it.
-- Hashtag detection is keyword/substring-based, so unusual phrasing in an ad's text may be missed.
-
-## License
-
-See the original upstream project — no separate license has been added in this fork.
+برای توسعه پروژه می‌توانید آن را Fork کرده و Pull Request ارسال کنید.
