@@ -19,6 +19,7 @@ class AD(BaseModel):
     features: list[tuple[str, str]] = []  # e.g. [("متراژ ویلا", "۱۰۰"), ...]
     posted_in: str = ""  # e.g. "علی‌آباد کتول، خ ابر-شیرین آباد-علی آباد"
     breadcrumb_categories: list[str] = []  # e.g. ["اجارهٔ کوتاه‌مدت", ...]
+    phone: str = ""  # seller's phone number, when we can find one
 
 
 _debug_dumped_once = False
@@ -149,6 +150,72 @@ def extract_breadcrumb_categories(sections):
     return titles
 
 
+def extract_phone_from_sections(sections):
+    """Some ads (mostly agencies) show the phone number directly as a row
+    on the post page, without needing the "show number" button. Walks the
+    whole widget tree looking for a tel: link or a title/value row whose
+    label mentions "شماره" (number)."""
+
+    def walk(node):
+        if isinstance(node, dict):
+            url = node.get("url") or node.get("phone_number")
+            if isinstance(url, str) and url.startswith("tel:"):
+                return url[len("tel:") :].strip()
+
+            title = node.get("title", "")
+            value = node.get("value", "")
+            if isinstance(title, str) and "شماره" in title and value:
+                digits = "".join(c for c in value if c.isdigit())
+                if len(digits) >= 10:
+                    return value
+
+            for v in node.values():
+                found = walk(v)
+                if found:
+                    return found
+        elif isinstance(node, list):
+            for item in node:
+                found = walk(item)
+                if found:
+                    return found
+        return None
+
+    return walk(sections) or ""
+
+
+def fetch_contact_phone(token: str) -> str:
+    """Calls Divar's separate contact-info endpoint (the one behind the
+    "show phone number" button) to fetch the seller's number. Best-effort:
+    Divar doesn't document this endpoint, so we fail quietly if the shape
+    doesn't match what we expect or the request is rejected."""
+    try:
+        response = requests.post(
+            config.DIVAR_CONTACT_URL.format(token=token),
+            headers=config.REQUEST_HEADERS,
+            json={"token": token},
+            timeout=15,
+        )
+        if not response.ok:
+            print(
+                "Warning: contact_info request for {} failed with status {}".format(
+                    token, response.status_code
+                )
+            )
+            return ""
+        data = response.json()
+    except (requests.RequestException, json.JSONDecodeError) as e:
+        print("Warning: couldn't fetch phone for {} ({}).".format(token, e))
+        return ""
+
+    for key in ("phone_number", "phone", "contact_phone", "mobile"):
+        value = data.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    # some responses nest it, e.g. {"widget": {"data": {"phone_number": ...}}}
+    return extract_phone_from_sections(data)
+
+
 def fetch_ad_data(token: str) -> AD:
     response = requests.get(
         config.DIVAR_POST_DETAIL_URL.format(token=token),
@@ -196,6 +263,10 @@ def fetch_ad_data(token: str) -> AD:
         posted_in = extract_posted_in(data["sections"])
         breadcrumb_categories = extract_breadcrumb_categories(data["sections"])
 
+        phone = extract_phone_from_sections(data["sections"])
+        if not phone:
+            phone = fetch_contact_phone(token)
+
         ad = AD(
             token=token,
             title=title,
@@ -206,6 +277,7 @@ def fetch_ad_data(token: str) -> AD:
             features=features,
             posted_in=posted_in,
             breadcrumb_categories=breadcrumb_categories,
+            phone=phone,
         )
     except (KeyError, IndexError, TypeError) as e:
         print("Warning: failed to parse ad {} ({}), skipping.".format(token, e))

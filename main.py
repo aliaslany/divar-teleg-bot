@@ -7,17 +7,20 @@ import time
 import telegram
 
 from divar_client import fetch_ad_data, get_tokens_page
-from storage import load_tokens, save_tokens
+from storage import load_phones, load_tokens, save_phones, save_tokens
 from telegram_client import send_telegram_message
 
 
-async def process_data(tokens):
+async def process_data(tokens, phones):
     for token in tokens:
         ad = fetch_ad_data(token)
         if not ad:
             continue
         print("AD - {} - {}".format(token, vars(ad)))
         print("sending to telegram token: {}".format(ad.token))
+
+        if ad.phone:
+            phones[ad.token] = {"phone": ad.phone, "title": ad.title}
 
         # send message to telegram (retry once on transient timeout)
         for attempt in range(2):
@@ -49,9 +52,11 @@ def main():
     print("{} of them are new (not seen before).".format(len(new_tokens)))
 
     all_tokens = list(set(new_tokens + seen_tokens))
-    asyncio.run(process_data(new_tokens))
+    phones = load_phones()
+    asyncio.run(process_data(new_tokens, phones))
 
     save_tokens(all_tokens)
+    save_phones(phones)
     print("Finished at {}.".format(datetime.datetime.now()))
 
 

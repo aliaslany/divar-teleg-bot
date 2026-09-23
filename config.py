@@ -3,6 +3,13 @@ import os
 
 DIVAR_SEARCH_URL = "https://api.divar.ir/v8/postlist/w/search"
 DIVAR_POST_DETAIL_URL = "https://api.divar.ir/v8/posts-v2/web/{token}"
+# Divar loads the seller's phone number lazily (behind the "show number"
+# button) rather than in the post detail response above. Configurable via
+# env in case Divar changes the path.
+DIVAR_CONTACT_URL = os.environ.get(
+    "DIVAR_CONTACT_URL",
+    "https://api.divar.ir/v8/postcontact/web/contact_info/{token}",
+)
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_CHATID = os.environ["BOT_CHATID"]
