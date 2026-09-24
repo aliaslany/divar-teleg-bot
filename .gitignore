@@ -1,6 +1,7 @@
 config.yml
 config.yaml
 tokens.json
+phones.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
