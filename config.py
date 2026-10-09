@@ -11,17 +11,25 @@ DIVAR_CONTACT_URL = os.environ.get(
     "https://api.divar.ir/v8/postcontact/web/contact_info/{token}",
 )
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-BOT_CHATID = os.environ["BOT_CHATID"]
+
+def _required_env(name):
+    value = os.environ.get(name, "").strip()
+    if not value:
+        raise ValueError("{} must be set to a non-empty value.".format(name))
+    return value
+
+
+BOT_TOKEN = _required_env("BOT_TOKEN")
+BOT_CHATID = _required_env("BOT_CHATID")
 SLEEP_SEC = os.environ.get("SLEEP_SEC", "")
 
 # Comma-separated list of city IDs, e.g. "823,1996,1999"
 SEARCH_CITY_IDS = [
     c.strip()
-    for c in os.environ.get("SEARCH_CITY_IDS", "897").split(",")
+    for c in os.environ.get("SEARCH_CITY_IDS", "").split(",")
     if c.strip()
-]
-SEARCH_CATEGORY = os.environ.get("SEARCH_CATEGORY", "real-estate")
+] or ["897"]
+SEARCH_CATEGORY = os.environ.get("SEARCH_CATEGORY", "").strip() or "real-estate"
 
 PROXY_URL = os.environ.get("PROXY_URL") or None
 

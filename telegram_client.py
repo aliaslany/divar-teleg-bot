@@ -42,6 +42,7 @@ def build_message_text(ad) -> str:
 
 
 async def send_telegram_message(ad):
+    """Send an ad, letting Telegram failures reach the delivery tracker."""
     text = build_message_text(ad)
 
     if len(ad.images) == 1:
@@ -53,16 +54,12 @@ async def send_telegram_message(ad):
         )
     elif len(ad.images) > 1:
         media_list = [telegram.InputMediaPhoto(img) for img in ad.images[:10]]
-        try:
-            await bot.send_media_group(
-                caption=text,
-                media=media_list,
-                chat_id=config.BOT_CHATID,
-                parse_mode="HTML",
-            )
-        except telegram.error.BadRequest as e:
-            print("Error sending photos :", e)
-            return
+        await bot.send_media_group(
+            caption=text,
+            media=media_list,
+            chat_id=config.BOT_CHATID,
+            parse_mode="HTML",
+        )
     else:
         await bot.send_message(
             text=text, chat_id=config.BOT_CHATID, parse_mode="HTML"

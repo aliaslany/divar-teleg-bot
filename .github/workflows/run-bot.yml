@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,11 +29,10 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Debug env
-        run: echo "SEARCH_CONDITIONS is set:" && [ -n "$SEARCH_CONDITIONS" ] && echo "yes" || echo "NO - EMPTY"
       - name: Run bot
+        id: runbot
         env:
-          SEARCH_CITY_IDS: ${{ secrets.SEARCH_CITY_IDS }}   # <-- تغییر از SEARCH_CITY_ID
+          SEARCH_CITY_IDS: ${{ secrets.SEARCH_CITY_IDS }}
           SEARCH_CATEGORY: ${{ secrets.SEARCH_CATEGORY }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHATID: ${{ secrets.BOT_CHATID }}
@@ -41,10 +43,45 @@ jobs:
 
 
       - name: Commit updated state file
+        id: statecommit
+        if: ${{ always() && (steps.runbot.outcome == 'success' || steps.runbot.outcome == 'failure') && hashFiles('tokens.json') != '' }}
+        env:
+          STATE_BRANCH: ${{ github.ref_name }}
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add tokens.json || true
-          git diff --staged --quiet || git commit -m "Update seen ads state"
-          git pull --rebase origin master
-          git push
+          git add -- tokens.json
+          if git diff --staged --quiet -- tokens.json; then
+            echo "No state changes to commit."
+            exit 0
+          fi
+
+          if [ "$GITHUB_REF_TYPE" != "branch" ]; then
+            echo "::error::State can only be saved to a branch; rerun this workflow with a branch ref."
+            exit 1
+          fi
+
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git commit -m "Update seen ads state" -- tokens.json
+
+          for attempt in 1 2 3; do
+            git fetch origin "$STATE_BRANCH"
+            if ! git rebase "origin/$STATE_BRANCH"; then
+              git rebase --abort
+              echo "::error::State changes conflict with the remote branch; resolve the conflict before retrying."
+              exit 1
+            fi
+            if git push origin "HEAD:refs/heads/$STATE_BRANCH"; then
+              exit 0
+            fi
+            echo "Push attempt $attempt failed; checking for concurrent branch changes."
+          done
+
+          echo "::error::Unable to push saved state after 3 attempts."
+          exit 1
+
+      - name: Preserve state after a failed push
+        if: ${{ always() && steps.statecommit.outcome == 'failure' && hashFiles('tokens.json') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sent-ad-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tokens.json
