@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aliaslany.github.io/divar-teleg-bot/sitemap.xml

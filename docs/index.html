@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101a14" />
+    <meta
+      name="description"
+      content="با دیوار اسیست، آگهی‌های تازهٔ شهر و دسته‌بندی دلخواهتان را در تلگرام دنبال کنید. پلن رایگان، ماهانه و پرداخت به‌ازای مصرف؛ مشاوره و پشتیبانی در تلگرام."
+    />
+    <title>دیوار اسیست | آگهی تازه، فرصت تازه</title>
+    <link rel="canonical" href="https://aliaslany.github.io/divar-teleg-bot/" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="دیوار اسیست | آگهی تازه، فرصت تازه" />
+    <meta
+      property="og:description"
+      content="آگهی‌های دلخواهتان را در تلگرام دنبال کنید. رایگان، ماهانه یا پرداخت به‌ازای مصرف."
+    />
+    <meta
+      property="og:url"
+      content="https://aliaslany.github.io/divar-teleg-bot/"
+    />
+    <meta
+      property="og:image"
+      content="https://aliaslany.github.io/divar-teleg-bot/assets/og-cover.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="assets/vazirmatn-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">رفتن به محتوای اصلی</a>
+    <svg
+      class="icon-definitions"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M19 12H5m7 7-7-7 7-7" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="i-telegram" viewBox="0 0 24 24">
+        <path d="m21 3-4 18-6-5-4 3 1-6 10-7-13 5-3-1Z" />
+        <path d="m8 13 3 3" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 5 5" />
+      </symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24">
+        <path d="M4 7h7m4 0h5M4 17h3m4 0h9" />
+        <circle cx="13" cy="7" r="2" />
+        <circle cx="9" cy="17" r="2" />
+      </symbol>
+      <symbol id="i-photo" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <circle cx="8" cy="8" r="1.5" />
+        <path d="m3 17 5-5 4 4 4-7 5 7" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 8H3c0-1 3-1 3-8Z" />
+        <path d="M9 21h6" />
+      </symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24">
+        <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </symbol>
+      <symbol id="i-code" viewBox="0 0 24 24">
+        <path d="m7 7-5 5 5 5m10-10 5 5-5 5M14 4l-4 16" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 6v6l4 2" />
+      </symbol>
+    </svg>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#" aria-label="دیوار اسیست، ابتدای صفحه">
+          <img src="assets/favicon.svg" width="42" height="42" alt="" />
+          <span
+            ><b dir="ltr">Divar Assist<span class="brand-dot">.</span></b
+            ><small>دستیار آگهی‌های شما</small></span
+          >
+        </a>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="باز کردن فهرست"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+          hidden
+        >
+          <svg class="icon"><use href="#i-menu" /></svg>
+        </button>
+        <nav id="primary-nav" class="primary-nav" aria-label="فهرست اصلی">
+          <a href="#features">امکانات</a>
+          <a href="#how-it-works">چطور کار می‌کند؟</a>
+          <a href="#pricing">پلن‌ها</a>
+          <a href="#faq">سوالات متداول</a>
+        </nav>
+        <a
+          class="header-contact"
+          href="https://t.me/Divarassist"
+          target="_blank"
+          rel="noopener noreferrer"
+          >گفت‌وگو با ما <svg class="icon"><use href="#i-telegram" /></svg
+        ></a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <span class="eyebrow"
+            ><span class="status-dot"></span> جست‌وجوی شما، همراه شما</span
+          >
+          <h1 id="hero-title">آگهی تازه،<br /><span>فرصتِ تازه.</span></h1>
+          <p class="hero-description">
+            فرصت‌های دیوار را در تلگرام دنبال کنید. شهر و دسته‌بندی دلخواهتان را
+            انتخاب کنید و آگهی‌های تازه را با عکس و جزئیات، یک‌جا ببینید.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#pricing"
+              >پلن مناسب من <svg class="icon"><use href="#i-arrow" /></svg
+            ></a>
+            <a
+              class="button button-secondary"
+              href="https://t.me/Divarassist"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><svg class="icon"><use href="#i-telegram" /></svg> مشاوره در
+              تلگرام</a
+            >
+          </div>
+          <div class="hero-note">
+            <span class="mini-avatars" aria-hidden="true"
+              ><svg class="icon"><use href="#i-search" /></svg
+              ><svg class="icon"><use href="#i-telegram" /></svg
+            ></span>
+            <p>
+              از جست‌وجو تا تلگرام.<br /><strong
+                >ساده، منظم و متناسب با نیاز شما.</strong
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="نمونهٔ نمایشی یک آگهی در تلگرام">
+          <div class="orbit orbit-one" aria-hidden="true"></div>
+          <div class="orbit orbit-two" aria-hidden="true"></div>
+          <div class="floating-label search-label">
+            <span class="floating-icon"
+              ><svg class="icon"><use href="#i-sliders" /></svg></span
+            ><span><small>جست‌وجوی دلخواه</small><b>تهران · املاک</b></span
+            ><span class="label-dot" aria-hidden="true"></span>
+          </div>
+          <div class="preview-card">
+            <div class="preview-top">
+              <span class="preview-avatar"
+                ><svg class="icon"><use href="#i-telegram" /></svg></span
+              ><span><b>دیوار اسیست</b><small>آگهی‌های منتخب شما</small></span
+              ><span class="demo-tag">نمونه نمایشی</span>
+            </div>
+            <div class="preview-picture">
+              <img
+                src="assets/villa.svg"
+                width="640"
+                height="380"
+                alt="تصویرسازی یک خانهٔ مدرن با درختان و حیاط"
+              /><span class="picture-tag"
+                ><span class="status-dot"></span> آگهی تازه</span
+              >
+            </div>
+            <div class="preview-body">
+              <span class="preview-category">فروش آپارتمان</span>
+              <h2>خانه‌ای برای شروعِ فصل تازه</h2>
+              <div class="property-details">
+                <span>۱۱۰ متر</span><span>۲ خواب</span><span>نورگیر</span>
+              </div>
+              <div class="preview-price">
+                <b>قیمت توافقی</b
+                ><span
+                  ><svg class="icon"><use href="#i-pin" /></svg> تهران</span
+                >
+              </div>
+              <div class="preview-footer">
+                <span>#املاک &nbsp; #تهران</span
+                ><span
+                  >آگهی منتخب شما <svg class="icon"><use href="#i-check" /></svg
+                ></span>
+              </div>
+            </div>
+          </div>
+          <div class="floating-label notification-label">
+            <span class="notification-icon"
+              ><svg class="icon"><use href="#i-bell" /></svg></span
+            ><span
+              ><b>یک فرصت تازه در تلگرام</b
+              ><small>عکس، مشخصات و هشتگ‌ها، کنار هم</small></span
+            ><svg class="icon notification-check"><use href="#i-check" /></svg>
+          </div>
+          <span class="visual-caption"
+            >تصویر و اطلاعات این کارت صرفاً نمونه است.</span
+          >
+        </div>
+      </section>
+
+      <div class="benefit-strip container" aria-label="مزایای اصلی">
+        <span
+          ><svg class="icon"><use href="#i-sliders" /></svg> انتخاب شهر و
+          دسته‌بندی</span
+        ><span
+          ><svg class="icon"><use href="#i-photo" /></svg> عکس و جزئیات
+          آگهی</span
+        ><span
+          ><svg class="icon"><use href="#i-telegram" /></svg> ارسال به تلگرام
+          شما</span
+        ><span
+          ><svg class="icon"><use href="#i-check" /></svg> ثبت آگهی‌های
+          ارسال‌شده</span
+        >
+      </div>
+
+      <section
+        class="section container"
+        id="features"
+        aria-labelledby="features-title"
+      >
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">کمتر جست‌وجو کنید. بهتر دنبال کنید.</span>
+            <h2 id="features-title">
+              چیزهایی که برای پیدا کردن<br />فرصت بعدی لازم دارید.
+            </h2>
+          </div>
+          <p>
+            جست‌وجو را مطابق نیازتان تنظیم کنید؛ آگهی‌های تازه در فضای آشنای
+            تلگرام در دسترس شما قرار می‌گیرند.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon"
+              ><svg class="icon"><use href="#i-sliders" /></svg></span
+            ><span class="card-number" aria-hidden="true">01</span>
+            <h3>انتخاب با شماست</h3>
+            <p>
+              شهر و دسته‌بندی موردنظرتان را مشخص کنید تا جست‌وجو حول چیزی باشد
+              که دنبالش هستید.
+            </p>
+            <div class="feature-chips">
+              <span>شهر دلخواه</span><span>دسته‌بندی دلخواه</span>
+            </div>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon"
+              ><svg class="icon"><use href="#i-photo" /></svg></span
+            ><span class="card-number" aria-hidden="true">02</span>
+            <h3>جزئیات، یک‌جا</h3>
+            <p>
+              تصاویر، مشخصات و هشتگ‌ها در پیام تلگرام قرار می‌گیرند تا مرور
+              آگهی‌ها آسان‌تر باشد.
+            </p>
+            <div class="feature-chips">
+              <span>تصویر آگهی</span><span>هشتگ‌های مرتبط</span>
+            </div>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon"
+              ><svg class="icon"><use href="#i-clock" /></svg></span
+            ><span class="card-number" aria-hidden="true">03</span>
+            <h3>پیگیری منظم</h3>
+            <p>
+              جست‌وجو به‌صورت دوره‌ای بررسی می‌شود و سابقهٔ ارسال‌ها نگه داشته
+              می‌شود تا آگهی‌های تازه را دنبال کنید.
+            </p>
+            <div class="feature-chips">
+              <span>بررسی دوره‌ای</span><span>سابقهٔ ارسال</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="how-section"
+        id="how-it-works"
+        aria-labelledby="how-title"
+      >
+        <div class="container how-inner">
+          <div class="how-intro">
+            <span class="eyebrow">از انتخاب تا دریافت</span>
+            <h2 id="how-title">
+              سه قدم تا<br /><span>جست‌وجوی منظم‌تر.</span>
+            </h2>
+            <p>
+              برای انتخاب پلن و هماهنگی راه‌اندازی، در تلگرام کنار شما هستیم.
+            </p>
+            <a
+              class="text-link"
+              href="https://t.me/Divarassist"
+              target="_blank"
+              rel="noopener noreferrer"
+              >با ما هماهنگ کنید <svg class="icon"><use href="#i-arrow" /></svg
+            ></a>
+          </div>
+          <ol class="steps">
+            <li>
+              <span class="step-number">۱</span>
+              <div>
+                <h3>جست‌وجویتان را مشخص کنید</h3>
+                <p>شهر و دسته‌بندی آگهی‌ها را متناسب با نیازتان انتخاب کنید.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-number">۲</span>
+              <div>
+                <h3>تلگرام را آماده کنید</h3>
+                <p>
+                  مقصد دریافت آگهی‌ها را در تنظیمات ربات مشخص کنید؛ برای
+                  راه‌اندازی می‌توانید با پشتیبانی هماهنگ کنید.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="step-number">۳</span>
+              <div>
+                <h3>آگهی‌های تازه را دنبال کنید</h3>
+                <p>
+                  پس از راه‌اندازی، آگهی‌های تازه در بررسی‌های دوره‌ای به تلگرام
+                  فرستاده می‌شوند.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section
+        class="section container pricing-section"
+        id="pricing"
+        aria-labelledby="pricing-title"
+      >
+        <div class="section-heading centered">
+          <span class="eyebrow">یک انتخاب برای هر سبک استفاده</span>
+          <h2 id="pricing-title">با پلن مناسب خودتان شروع کنید.</h2>
+          <p>
+            از نسخهٔ رایگان شروع کنید یا برای خدمات با پرداخت ماهانه و به‌ازای
+            مصرف، با ما هماهنگ کنید.
+          </p>
+        </div>
+        <div class="pricing-grid">
+          <article class="plan-card" aria-labelledby="free-title">
+            <div class="plan-heading">
+              <span class="plan-label" lang="en" dir="ltr">FREE</span
+              ><svg class="icon"><use href="#i-code" /></svg>
+            </div>
+            <h3 id="free-title">رایگان</h3>
+            <p class="plan-description">برای راه‌اندازی و مدیریت توسط خودتان</p>
+            <div class="plan-price">۰ <span>تومان</span></div>
+            <p class="price-note">کد ربات، در اختیار شما</p>
+            <a
+              class="button button-secondary plan-button"
+              href="https://github.com/aliaslany/divar-teleg-bot#readme"
+              target="_blank"
+              rel="noopener noreferrer"
+              >شروع با نسخهٔ رایگان
+              <svg class="icon"><use href="#i-arrow" /></svg
+            ></a>
+            <ul class="plan-features">
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> جست‌وجو بر اساس
+                شهر و دسته‌بندی
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> ارسال عکس و
+                مشخصات به تلگرام
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> اجرای ربات در
+                حساب خودتان
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> دسترسی به
+                راهنمای راه‌اندازی
+              </li>
+            </ul>
+            <p class="plan-footnote">
+              راه‌اندازی و هزینه‌های احتمالی اجرای ربات بر عهدهٔ شماست.
+            </p>
+          </article>
+          <article
+            class="plan-card featured-plan"
+            aria-labelledby="monthly-title"
+          >
+            <span class="plan-ribbon">برای نیازهای مستمر</span>
+            <div class="plan-heading">
+              <span class="plan-label" lang="en" dir="ltr">MONTHLY</span
+              ><svg class="icon"><use href="#i-clock" /></svg>
+            </div>
+            <h3 id="monthly-title">ماهانه</h3>
+            <p class="plan-description">
+              برای استفاده با برنامهٔ پرداخت ماهانه
+            </p>
+            <div class="plan-price quote-price">استعلام تعرفه</div>
+            <p class="price-note">شرایط روشن، پیش از شروع</p>
+            <a
+              class="button button-primary plan-button"
+              href="https://t.me/Divarassist"
+              target="_blank"
+              rel="noopener noreferrer"
+              >مشاورهٔ پلن ماهانه <svg class="icon"><use href="#i-arrow" /></svg
+            ></a>
+            <ul class="plan-features">
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> هماهنگی نیاز و
+                حجم استفاده
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> توافق دربارهٔ
+                تعرفهٔ ماهانه
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> تعیین شرایط
+                راه‌اندازی و پشتیبانی
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> ارتباط مستقیم در
+                تلگرام
+              </li>
+            </ul>
+            <p class="plan-footnote">
+              هزینه، شرایط استفاده و پشتیبانی پیش از شروع با شما هماهنگ می‌شود.
+            </p>
+          </article>
+          <article class="plan-card" aria-labelledby="usage-title">
+            <div class="plan-heading">
+              <span class="plan-label" lang="en" dir="ltr">PAY AS YOU GO</span
+              ><svg class="icon"><use href="#i-sliders" /></svg>
+            </div>
+            <h3 id="usage-title">پرداخت به‌ازای مصرف</h3>
+            <p class="plan-description">برای نیازهای مقطعی یا حجم متغیر</p>
+            <div class="plan-price quote-price">استعلام هزینه</div>
+            <p class="price-note">بدون تعهد به پرداخت ماهانه</p>
+            <a
+              class="button button-secondary plan-button"
+              href="https://t.me/Divarassist"
+              target="_blank"
+              rel="noopener noreferrer"
+              >هماهنگی پلن مصرفی <svg class="icon"><use href="#i-arrow" /></svg
+            ></a>
+            <ul class="plan-features">
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> بررسی حجم
+                موردنیاز شما
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> توافق دربارهٔ
+                مبنای محاسبهٔ مصرف
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> تعیین هزینه پیش
+                از راه‌اندازی
+              </li>
+              <li>
+                <svg class="icon"><use href="#i-check" /></svg> ارتباط مستقیم در
+                تلگرام
+              </li>
+            </ul>
+            <p class="plan-footnote">
+              مبنای محاسبهٔ مصرف و هزینهٔ آن پیش از شروع مشخص می‌شود.
+            </p>
+          </article>
+        </div>
+        <p class="pricing-note">
+          <svg class="icon"><use href="#i-telegram" /></svg> خرید و فعال‌سازی
+          پلن‌های پولی پس از هماهنگی با
+          <a
+            href="https://t.me/Divarassist"
+            target="_blank"
+            rel="noopener noreferrer"
+            dir="ltr"
+            >@Divarassist</a
+          >
+          انجام می‌شود.
+        </p>
+      </section>
+
+      <section
+        class="section container faq-section"
+        id="faq"
+        aria-labelledby="faq-title"
+      >
+        <div class="faq-intro">
+          <span class="eyebrow">قبل از شروع</span>
+          <h2 id="faq-title">شاید سوال<br />شما هم باشد.</h2>
+          <p>هنوز سوالی دارید؟<br />یک پیام در تلگرام کافی است.</p>
+          <a
+            class="text-link"
+            href="https://t.me/Divarassist"
+            target="_blank"
+            rel="noopener noreferrer"
+            >پرسیدن از پشتیبانی <svg class="icon"><use href="#i-arrow" /></svg
+          ></a>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>
+              دیوار اسیست دقیقاً چه کاری انجام می‌دهد؟<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              این ربات آگهی‌های دیوار را برای شهر و دسته‌بندی انتخابی بررسی
+              می‌کند و آگهی‌های تازه را همراه تصاویر و اطلاعات به مقصد تلگرام
+              تعیین‌شده می‌فرستد.
+            </p>
+          </details>
+          <details>
+            <summary>
+              نسخهٔ رایگان چه تفاوتی با پلن‌های پولی دارد؟<span
+                aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              در نسخهٔ رایگان، کد و راهنما را دریافت می‌کنید و ربات را در حساب
+              خودتان راه‌اندازی و مدیریت می‌کنید. برای خدمات با پرداخت ماهانه یا
+              به‌ازای مصرف، جزئیات راه‌اندازی، هزینه و پشتیبانی پیش از شروع با
+              شما هماهنگ می‌شود.
+            </p>
+          </details>
+          <details>
+            <summary>
+              قیمت پلن ماهانه و مصرفی چقدر است؟<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              برای اعلام هزینه، ابتدا نیاز و حجم استفادهٔ شما مشخص می‌شود. به
+              <a
+                href="https://t.me/Divarassist"
+                target="_blank"
+                rel="noopener noreferrer"
+                >پشتیبانی تلگرام</a
+              >
+              پیام بدهید تا تعرفه و شرایط را پیش از شروع دریافت کنید.
+            </p>
+          </details>
+          <details>
+            <summary>
+              آگهی‌ها بلافاصله ارسال می‌شوند؟<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              آگهی‌ها در بررسی‌های دوره‌ای دریافت و ارسال می‌شوند. زمان دریافت
+              به برنامهٔ اجرا و دسترسی به دیوار و تلگرام بستگی دارد؛ ارسال
+              لحظه‌ای تضمین نمی‌شود.
+            </p>
+          </details>
+          <details>
+            <summary>
+              برای شروع و دریافت پشتیبانی کجا پیام بدهم؟<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              برای انتخاب پلن، هماهنگی راه‌اندازی و سوالات پشتیبانی، مستقیماً به
+              <a
+                href="https://t.me/Divarassist"
+                target="_blank"
+                rel="noopener noreferrer"
+                dir="ltr"
+                >@Divarassist</a
+              >
+              در تلگرام پیام بدهید.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section
+        class="container contact-section"
+        aria-labelledby="contact-title"
+      >
+        <div class="contact-panel">
+          <span class="contact-decoration" aria-hidden="true"
+            ><svg class="icon"><use href="#i-telegram" /></svg
+          ></span>
+          <div>
+            <span class="eyebrow">فرصت بعدی از همین‌جا شروع می‌شود</span>
+            <h2 id="contact-title">
+              جست‌وجو را به ما بسپارید.<br />انتخاب را برای خودتان نگه دارید.
+            </h2>
+            <p>دربارهٔ نیازتان بگویید؛ برای انتخاب پلن مناسب کمکتان می‌کنیم.</p>
+          </div>
+          <a
+            class="button button-primary"
+            href="https://t.me/Divarassist"
+            target="_blank"
+            rel="noopener noreferrer"
+            >گفت‌وگو در تلگرام <svg class="icon"><use href="#i-arrow" /></svg
+          ></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer container">
+      <div class="footer-top">
+        <a class="brand" href="#"
+          ><img src="assets/favicon.svg" width="38" height="38" alt="" /><span
+            ><b dir="ltr">Divar Assist<span class="brand-dot">.</span></b
+            ><small>دستیار آگهی‌های شما</small></span
+          ></a
+        >
+        <nav aria-label="پیوندهای پایین صفحه">
+          <a href="#pricing">پلن‌ها</a
+          ><a
+            href="https://github.com/aliaslany/divar-teleg-bot"
+            target="_blank"
+            rel="noopener noreferrer"
+            >نسخهٔ رایگان</a
+          ><a
+            href="https://t.me/Divarassist"
+            target="_blank"
+            rel="noopener noreferrer"
+            >پشتیبانی <span dir="ltr">@Divarassist</span></a
+          >
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          دیوار اسیست، ابزاری مستقل برای دنبال کردن آگهی‌ها؛ وابسته به دیوار یا
+          تلگرام نیست.
+        </p>
+        <span dir="ltr">Made for your next opportunity.</span>
+      </div>
+    </footer>
+  </body>
+</html>

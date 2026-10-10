@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" role="img" aria-labelledby="villa-title villa-description">
+  <title id="villa-title">Illustration of a modern villa</title>
+  <desc id="villa-description">A warm cream villa with arched windows and doorway, sage trees, and a sunlit desert garden.</desc>
+  <defs>
+    <linearGradient id="villa-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#e8e9d7"/>
+      <stop offset="1" stop-color="#f8f0df"/>
+    </linearGradient>
+    <linearGradient id="villa-ground" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#dcd8be"/>
+      <stop offset="1" stop-color="#c6caa4"/>
+    </linearGradient>
+    <linearGradient id="villa-plaster" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff8e9"/>
+      <stop offset="1" stop-color="#eae2cc"/>
+    </linearGradient>
+    <linearGradient id="villa-glass" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#a7bdb1"/>
+      <stop offset="1" stop-color="#607e70"/>
+    </linearGradient>
+    <linearGradient id="villa-door" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#526b5a"/>
+      <stop offset="1" stop-color="#344c3c"/>
+    </linearGradient>
+    <radialGradient id="villa-halo">
+      <stop stop-color="#f3e1b0" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#f3e1b0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="villa-shadow" x="-25%" y="-70%" width="150%" height="250%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <path fill="url(#villa-sky)" d="M0 0h640v380H0z"/>
+  <circle cx="516" cy="85" r="101" fill="url(#villa-halo)"/>
+  <circle cx="516" cy="85" r="34" fill="#e7cc87" opacity=".65"/>
+  <path d="M0 222c66-58 119-72 180-24 69-74 120-74 200-17 102-58 185-26 260 28v97H0Z" fill="#cdd4b5" opacity=".75"/>
+  <path d="M0 257c102-53 183-24 264-4 147-45 254-28 376 6v121H0Z" fill="url(#villa-ground)"/>
+  <path d="M0 307c128-39 220-11 315 3 139 24 235-15 325-11v81H0Z" fill="#bec59d" opacity=".6"/>
+
+  <ellipse cx="340" cy="296" rx="210" ry="16" fill="#6e795d" opacity=".2" filter="url(#villa-shadow)"/>
+  <path d="M132 280h394l21 16H119Z" fill="#d3ccb3"/>
+  <path d="M119 296h428v7H119Z" fill="#b6b99b"/>
+
+  <path d="M257 127h247v158H257Z" fill="url(#villa-plaster)"/>
+  <path d="m504 127 25 17v141h-25Z" fill="#d1c9ae"/>
+  <rect x="248" y="118" width="265" height="12" rx="2" fill="#fff9ec"/>
+  <path d="m513 118 25 17v12l-25-17Z" fill="#e0d8c0"/>
+  <path d="M258 130h246v7H258Z" fill="#c9bea1" opacity=".45"/>
+
+  <path d="M142 170h263v115H142Z" fill="url(#villa-plaster)"/>
+  <path d="m405 170 18 12v103h-18Z" fill="#d7cdb1"/>
+  <rect x="132" y="162" width="281" height="12" rx="2" fill="#fff9ec"/>
+  <path d="M143 174h261v8H143Z" fill="#c9bea1" opacity=".42"/>
+  <path d="M146 267h258v18H146Z" fill="#ded4ba" opacity=".65"/>
+
+  <path d="M284 285v-68a33 33 0 0 1 66 0v68Z" fill="#d2c6a5"/>
+  <path d="M290 285v-67a27 27 0 0 1 54 0v67Z" fill="url(#villa-door)"/>
+  <path d="M316 193v92" stroke="#718571" stroke-width="1.5" opacity=".55"/>
+  <path d="M297 227h15v50h-15zm24 0h16v50h-16Z" fill="none" stroke="#80927a" opacity=".4"/>
+  <path d="M336 244v13" stroke="#dfc777" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="278" y="280" width="78" height="7" rx="1" fill="#e9e2ce"/>
+  <rect x="273" y="287" width="88" height="6" rx="1" fill="#ddd6be"/>
+
+  <path d="M180 253v-37a26 26 0 0 1 52 0v37Z" fill="#d7c9a8"/>
+  <path d="M185 249v-33a21 21 0 0 1 42 0v33Z" fill="url(#villa-glass)"/>
+  <path d="M206 197v52m-21-23h42" stroke="#e9e2cc" stroke-width="2.5"/>
+  <path d="m189 219 18-18m-16 38 32-32" stroke="#dce6d8" stroke-width="4" opacity=".3"/>
+  <rect x="176" y="253" width="60" height="5" rx="1" fill="#e8ddbf"/>
+
+  <path d="M438 230v-52a23 23 0 0 1 46 0v52Z" fill="#d1c4a2"/>
+  <path d="M443 226v-47a18 18 0 0 1 36 0v47Z" fill="url(#villa-glass)"/>
+  <path d="M461 161v65m-18-34h36" stroke="#eee7d3" stroke-width="2.5"/>
+  <path d="m447 183 14-15m-14 35 27-27" stroke="#dce6d8" stroke-width="4" opacity=".25"/>
+  <rect x="433" y="230" width="56" height="5" rx="1" fill="#e5dac0"/>
+  <rect x="434" y="242" width="55" height="43" fill="#dcd3b9" opacity=".3"/>
+
+  <path d="M359 196h9v65h-9Z" fill="#e9dfc5"/>
+  <path d="M361 196h3v65h-3Z" fill="#fff6df" opacity=".7"/>
+  <path d="M262 195h8v67h-8Z" fill="#e9dfc5"/>
+  <rect x="265" y="204" width="4" height="14" rx="2" fill="#849079"/>
+  <rect x="359" y="204" width="4" height="14" rx="2" fill="#849079"/>
+
+  <path d="M310 303c12 3 18 12 18 20s-10 18-8 24 15 13 20 33" fill="none" stroke="#dbd7bf" stroke-width="52"/>
+  <path d="m288 306 43-1 6 11-46 2Z" fill="#f2ead5"/>
+  <path d="m292 329 49-1 3 12-51 2Z" fill="#eae3cd"/>
+  <path d="m294 353 58-1 8 14-61 2Z" fill="#f2ead5"/>
+
+  <ellipse cx="97" cy="310" rx="52" ry="10" fill="#8a9571" opacity=".2"/>
+  <path d="M98 238v67m0-31-17-29m17 21 18-24" stroke="#8c9777" stroke-width="5" stroke-linecap="round"/>
+  <path d="M74 251c-29-10-31-32-13-50 1-28 31-39 53-25 29-4 49 23 40 48-5 28-49 44-80 27Z" fill="#7f967a"/>
+  <path d="M64 211c13-13 31-17 47-9m-18 28c16-10 35-9 46-2" fill="none" stroke="#9cb08c" stroke-width="12" stroke-linecap="round" opacity=".45"/>
+  <path d="M74 251c23 9 66-1 76-22-3 24-29 43-50 39Z" fill="#697f68" opacity=".45"/>
+
+  <path d="M552 244v70m0-39-14-20m14 2 15-20" stroke="#8d9572" stroke-width="4" stroke-linecap="round"/>
+  <path d="M531 262c-27-6-36-24-23-43-6-27 22-48 42-33 26-13 59 10 53 33 15 27-29 57-72 43Z" fill="#8c9f7b"/>
+  <path d="M523 225c16-16 31-12 39-6m-13 25 28-8" fill="none" stroke="#b0b995" stroke-width="12" stroke-linecap="round" opacity=".5"/>
+  <ellipse cx="552" cy="317" rx="44" ry="8" fill="#82916f" opacity=".18"/>
+
+  <path d="m510 342-12-43 26 33-4-61 17 61 20-39-10 45 34-26-24 31Z" fill="#7d9272"/>
+  <path d="m525 343 5-48 9 47 25-17-20 26Z" fill="#a0ad83"/>
+  <path d="M506 344h45l-7 19h-31Z" fill="#bdaf83"/>
+  <path d="M507 344h43v5h-43Z" fill="#d7c697"/>
+  <path d="m59 345 9-27 6 28 14-22-6 25Z" fill="#7e9570"/>
+  <path d="m174 321 10-17 3 18 12-11-7 17Z" fill="#96a27b"/>
+  <path d="M416 309c17-16 43-11 57-2-14 7-37 11-57 2Z" fill="#93a27a"/>
+  <path d="M431 306c3-10 9-14 17-15" fill="none" stroke="#81916c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M23 358c14-3 22-2 32 0m498 11c14-3 33-1 45 2" fill="none" stroke="#9eab82" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+</svg>
